@@ -22,6 +22,7 @@ export interface ParentInfo {
     firstName: string;
     lastName: string;
     email: string;
+    telephone: string;
     relationship: 'mother' | 'father' | 'guardian';
 }
 
@@ -32,20 +33,23 @@ export interface SignupFormData {
     email: string;
     password: string;
     confirmPassword: string;
-    
+
     // Step 2: Personal Details
     telephone: string;
+    profilePicture?: File | string;
     country: string;
     dateOfBirth: string;
-    
+    quranLevel: string;
+
     // Step 3: Parent/Guardian Information (if under 18)
     parentInfo?: {
         firstName: string;
         lastName: string;
         email: string;
+        telephone: string;
         relationship: 'mother' | 'father' | 'guardian';
     };
-    
+
     // Computed fields
     userType: 'child' | 'adult';
     age: number;

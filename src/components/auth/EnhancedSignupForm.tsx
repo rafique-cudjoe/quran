@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   User, 
   Mail, 
@@ -12,7 +12,11 @@ import {
   Check, 
   Eye, 
   EyeOff,
-  UserPlus
+  Camera,
+  Upload,
+  Book,
+  Search,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardContent, CardHeader } from '../ui/Card';
@@ -30,6 +34,9 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const countryDropdownRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState<SignupFormData>({
     firstName: '',
     lastName: '',
@@ -39,17 +46,53 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
     telephone: '',
     country: '',
     dateOfBirth: '',
+    quranLevel: '',
     userType: 'adult',
     age: 0
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   const countries = [
-    'United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France',
-    'Netherlands', 'Sweden', 'Norway', 'Denmark', 'Saudi Arabia', 'UAE', 'Qatar',
-    'Kuwait', 'Bahrain', 'Oman', 'Turkey', 'Morocco', 'Egypt', 'Jordan', 'Lebanon',
-    'Pakistan', 'India', 'Bangladesh', 'Malaysia', 'Indonesia', 'Singapore', 'Other'
+    'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',
+    'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
+    'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia',
+    'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica',
+    'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Democratic Republic of the Congo', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador',
+    'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France',
+    'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau',
+    'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland',
+    'Israel', 'Italy', 'Ivory Coast', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait',
+    'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg',
+    'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico',
+    'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru',
+    'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia', 'Norway', 'Oman',
+    'Pakistan', 'Palau', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal',
+    'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe',
+    'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia',
+    'South Africa', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria',
+    'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey',
+    'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu',
+    'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
   ];
+
+  // Filter countries based on search
+  const filteredCountries = countries.filter(country =>
+    country.toLowerCase().includes(countrySearch.toLowerCase())
+  );
+
+  // Handle clicking outside the country dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+        setShowCountryDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const calculateAge = (dateOfBirth: string): number => {
     const today = new Date();
@@ -64,11 +107,11 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
     return age;
   };
 
-  const updateFormData = (field: string, value: string) => {
+  const updateFormData = (field: string, value: string | File) => {
     const newFormData = { ...formData, [field]: value };
     
     // Auto-calculate age and user type when date of birth changes
-    if (field === 'dateOfBirth' && value) {
+    if (field === 'dateOfBirth' && typeof value === 'string' && value) {
       const age = calculateAge(value);
       newFormData.age = age;
       newFormData.userType = age < 18 ? 'child' : 'adult';
@@ -89,6 +132,7 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
         firstName: '',
         lastName: '',
         email: '',
+        telephone: '',
         relationship: 'mother' as const,
         ...formData.parentInfo,
         [field]: value
@@ -114,6 +158,7 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
         if (!formData.telephone.trim()) newErrors.telephone = 'Phone number is required';
         if (!formData.country) newErrors.country = 'Country is required';
         if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+        if (!formData.quranLevel) newErrors.quranLevel = 'Quran level is required';
         break;
         
       case 3:
@@ -122,6 +167,7 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
           if (!formData.parentInfo?.lastName.trim()) newErrors.parentLastName = 'Parent last name is required';
           if (!formData.parentInfo?.email.trim()) newErrors.parentEmail = 'Parent email is required';
           if (!/\S+@\S+\.\S+/.test(formData.parentInfo?.email || '')) newErrors.parentEmail = 'Invalid parent email format';
+          if (!formData.parentInfo?.telephone.trim()) newErrors.parentTelephone = 'Parent phone number is required';
           if (!formData.parentInfo?.relationship) newErrors.parentRelationship = 'Relationship is required';
         }
         break;
@@ -318,22 +364,115 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
 
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-2">
+          Profile Picture
+        </label>
+        <div className="flex items-center space-x-4">
+          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center border-2 border-dashed border-slate-300">
+            {formData.profilePicture ? (
+              <img 
+                src={formData.profilePicture instanceof File ? URL.createObjectURL(formData.profilePicture) : formData.profilePicture} 
+                alt="Profile preview" 
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <Camera className="w-8 h-8 text-slate-400" />
+            )}
+          </div>
+          <div className="flex-1">
+            <input
+              type="file"
+              id="profilePicture"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  updateFormData('profilePicture', file);
+                }
+              }}
+              className="hidden"
+            />
+            <label
+              htmlFor="profilePicture"
+              className="inline-flex items-center px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 cursor-pointer transition-colors"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Choose Photo
+            </label>
+            <p className="text-xs text-slate-500 mt-1">JPG, PNG or GIF (max 5MB)</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
           Country *
         </label>
-        <div className="relative">
-          <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-          <select
-            value={formData.country}
-            onChange={(e) => updateFormData('country', e.target.value)}
-            className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors appearance-none ${
-              errors.country ? 'border-red-500' : 'border-slate-300'
-            }`}
-          >
-            <option value="">Select your country</option>
-            {countries.map((country) => (
-              <option key={country} value={country}>{country}</option>
-            ))}
-          </select>
+        <div className="relative" ref={countryDropdownRef}>
+          <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+          <div className="relative">
+            <input
+              type="text"
+              value={formData.country}
+              onChange={(e) => {
+                updateFormData('country', e.target.value);
+                setCountrySearch(e.target.value);
+                setShowCountryDropdown(true);
+              }}
+              onFocus={() => setShowCountryDropdown(true)}
+              className={`w-full pl-10 pr-10 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+                errors.country ? 'border-red-500' : 'border-slate-300'
+              }`}
+              placeholder="Search and select your country"
+            />
+            <button
+              type="button"
+              onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <ChevronDown className="w-5 h-5" />
+            </button>
+            
+            {showCountryDropdown && (
+              <div className="absolute z-50 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="p-2 border-b border-slate-200">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      value={countrySearch}
+                      onChange={(e) => setCountrySearch(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Search countries..."
+                    />
+                  </div>
+                </div>
+                <div className="max-h-48 overflow-y-auto">
+                  {filteredCountries.length > 0 ? (
+                    filteredCountries.map((country) => (
+                      <button
+                        key={country}
+                        type="button"
+                        onClick={() => {
+                          updateFormData('country', country);
+                          setCountrySearch('');
+                          setShowCountryDropdown(false);
+                        }}
+                        className={`w-full text-left px-4 py-2 hover:bg-emerald-50 transition-colors ${
+                          formData.country === country ? 'bg-emerald-100 text-emerald-700' : 'text-slate-700'
+                        }`}
+                      >
+                        {country}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-slate-500 text-center">
+                      No countries found
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
       </div>
@@ -366,6 +505,28 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
             </p>
           </div>
         )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Holy Quran Level *
+        </label>
+        <div className="relative">
+          <Book className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <select
+            value={formData.quranLevel}
+            onChange={(e) => updateFormData('quranLevel', e.target.value)}
+            className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors appearance-none ${
+              errors.quranLevel ? 'border-red-500' : 'border-slate-300'
+            }`}
+          >
+            <option value="">Select your Quran level</option>
+            <option value="beginners">Beginners - Currently started learning Yarsanal Quran</option>
+            <option value="advanced">Advanced - Want to polish Quran</option>
+            <option value="hifz">Hifz - Want to memorize Quran</option>
+          </select>
+        </div>
+        {errors.quranLevel && <p className="text-red-500 text-sm mt-1">{errors.quranLevel}</p>}
       </div>
     </div>
   );
@@ -435,6 +596,25 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
 
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-2">
+          Parent/Guardian Phone Number *
+        </label>
+        <div className="relative">
+          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <input
+            type="tel"
+            value={formData.parentInfo?.telephone || ''}
+            onChange={(e) => updateParentInfo('telephone', e.target.value)}
+            className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors ${
+              errors.parentTelephone ? 'border-red-500' : 'border-slate-300'
+            }`}
+            placeholder="+1 (555) 123-4567"
+          />
+        </div>
+        {errors.parentTelephone && <p className="text-red-500 text-sm mt-1">{errors.parentTelephone}</p>}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
           Relationship *
         </label>
         <select
@@ -450,22 +630,6 @@ export const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({
           <option value="guardian">Guardian</option>
         </select>
         {errors.parentRelationship && <p className="text-red-500 text-sm mt-1">{errors.parentRelationship}</p>}
-      </div>
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <UserPlus className="w-4 h-4 text-blue-600" />
-            </div>
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-blue-800">Parent/Guardian Account</h3>
-            <p className="text-sm text-blue-700 mt-1">
-              Your parent/guardian will receive an email to set up their account and can monitor your progress.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
