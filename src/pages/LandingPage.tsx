@@ -128,7 +128,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                Quran Academy
+                Ismail Academy
               </h1>
             </div>
             <div className="flex items-center space-x-4">
@@ -560,7 +560,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold">Quran Academy</h3>
+                <h3 className="text-xl font-bold">Ismail Academy</h3>
               </div>
               <p className="text-slate-400 mb-6 leading-relaxed">
                 Empowering Muslims worldwide to learn and connect with the Holy Quran through 
@@ -591,7 +591,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
           </div>
           <div className="border-t border-slate-800 mt-12 pt-8 text-center">
             <p className="text-slate-400">
-              © 2024 Quran Academy. All rights reserved.
+              © 2024 Ismail Academy. All rights reserved.
             </p>
           </div>
         </div>

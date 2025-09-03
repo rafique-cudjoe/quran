@@ -3,37 +3,43 @@ import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Card, CardContent, CardHeader } from '../ui/Card';
+import { useAuth } from '../../hooks/useAuth';
+import { LoginRequest } from '../../services/authService';
+import { parseValidationErrors, clearFieldError, FormErrors } from '../../utils/validationUtils';
 
 interface LoginFormProps {
-  onLogin: (email: string, password: string) => void;
   onBack: () => void;
   onSignupClick: () => void;
-  loading?: boolean;
+  onLoginSuccess?: () => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
-  onLogin,
   onBack,
   onSignupClick,
-  loading = false
+  onLoginSuccess
 }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { login, isLoading } = useAuth();
+  const [formData, setFormData] = useState<LoginRequest>({
+    email: '',
+    password: '',
+    userType: 'adult'
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{email?: string; password?: string}>({});
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const validateForm = () => {
-    const newErrors: {email?: string; password?: string} = {};
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
     
-    if (!email) {
+    if (!formData.email) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
     
-    if (!password) {
+    if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
+    } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
     
@@ -41,12 +47,48 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onLogin(email, password);
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const response = await login(formData);
+      
+      if (response.success) {
+        // Login successful, call success callback
+        onLoginSuccess?.();
+      } else {
+        // Parse validation errors from backend response
+        const validationErrors = parseValidationErrors(response.message || response.error || '');
+        setErrors(validationErrors);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      // Handle unexpected errors
+      setErrors({ general: 'An unexpected error occurred. Please try again.' });
     }
   };
+
+  const handleInputChange = (field: keyof LoginRequest, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Clear field-specific error when user starts typing
+    clearFieldError(errors, field, setErrors);
+  };
+
+  // Use rememberMe for future implementation
+  React.useEffect(() => {
+    if (rememberMe) {
+      // Future: implement remember me functionality
+      console.log('Remember me is enabled');
+    }
+  }, [rememberMe]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50 flex items-center justify-center p-4">
@@ -70,12 +112,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {errors.general && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-600 text-sm">{errors.general}</p>
+                </div>
+              )}
+              
               <Input
                 type="email"
                 label="Email Address"
                 placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
                 error={errors.email}
                 leftIcon={<Mail className="w-5 h-5 text-slate-400" />}
               />
@@ -84,8 +132,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 type={showPassword ? 'text' : 'password'}
                 label="Password"
                 placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
                 error={errors.password}
                 leftIcon={<Lock className="w-5 h-5 text-slate-400" />}
                 rightIcon={
@@ -103,6 +151,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 <label className="flex items-center">
                   <input
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 text-emerald-600 bg-white border-slate-300 rounded focus:ring-emerald-500 focus:ring-2"
                   />
                   <span className="ml-2 text-sm text-slate-600">Remember me</span>
@@ -115,10 +165,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <Button
                 type="submit"
                 className="w-full"
-                loading={loading}
+                loading={isLoading}
                 size="lg"
+                disabled={isLoading}
               >
-                Sign In
+                {isLoading ? 'Signing In...' : 'Sign In'}
               </Button>
             </form>
             

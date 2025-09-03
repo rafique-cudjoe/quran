@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { LandingPage } from './pages/LandingPage';
 import { SalatVideosPage } from './pages/SalatVideosPage';
 import { LoginForm } from './components/auth/LoginForm';
-import { EnhancedSignupForm } from './components/auth/EnhancedSignupForm';
+import { EnhancedSignupForm } from './components/auth/SignupForm';
 import { StudentDashboard } from './components/dashboard/StudentDashboard';
 import { InstructorDashboard } from './components/dashboard/InstructorDashboard';
+import { Toast } from './components/ui/Toast';
 import { User, Session, Instructor, Notification, Payment, RecitationEntry, SignupFormData } from './types';
+import { authService, RegisterRequest } from './services/authService';
+import { useToast } from './hooks/useToast';
 
 type Page = 'home' | 'login' | 'signup' | 'student-dashboard' | 'instructor-dashboard' | 'salat-videos';
 
-// Mock data for demonstration
+// Mock data for demonstration (will be replaced with real API data)
 const mockInstructor: Instructor = {
   id: '1',
   name: 'Ustadh Muhammad Ali',
@@ -46,7 +49,7 @@ const mockUser: User = {
     sessionsIncluded: 16,
     sessionsUsed: 8
   },
-  selectedSessions: ['1', '2', '4'], // Added session 4 (the "starting soon" test session)
+  selectedSessions: ['1', '2'],
   progress: {
     totalHours: 45,
     completedLessons: 12,
@@ -60,14 +63,6 @@ const mockUser: User = {
         icon: '🎉',
         dateEarned: '2024-01-22',
         category: 'attendance'
-      },
-      {
-        id: '2',
-        title: 'Tajweed Master',
-        description: 'Mastered basic Tajweed rules',
-        icon: '📖',
-        dateEarned: '2024-02-01',
-        category: 'recitation'
       }
     ],
     weeklyGoal: 10,
@@ -78,13 +73,13 @@ const mockUser: User = {
 const mockSessions: Session[] = [
   {
     id: '1',
-    title: 'Evening Quran Session - North America',
-    description: 'Mixed-level Quran learning session for students in North American time zones. All skill levels welcome.',
+    title: 'Evening Quran Session',
+    description: 'Mixed-level Quran learning session for students in North American time zones.',
     instructor: mockInstructor,
     schedule: {
       day: 'Monday',
-      startTime: '23:00', // 7 PM EST
-      endTime: '24:00',   // 8 PM EST
+      startTime: '23:00',
+      endTime: '24:00',
       timezone: 'EST'
     },
     region: 'North America',
@@ -102,26 +97,26 @@ const mockSessions: Session[] = [
       joinUrl: 'https://zoom.us/j/123456789?pwd=example',
       hostUrl: 'https://zoom.us/s/123456789?zak=example',
       password: 'quran123',
-      startTime: '2025-09-03T23:00:00Z', // Tomorrow at 7 PM EST
+      startTime: '2025-09-03T23:00:00Z',
       duration: 60,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=123456789&pwd=quran123',
       webLink: 'https://zoom.us/wc/join/123456789?pwd=quran123',
-      generatedAt: '2025-09-03T21:00:00Z', // Generated 2 hours before
+      generatedAt: '2025-09-03T21:00:00Z',
       isReady: true
     },
     materials: ['Quran', 'Basic Tajweed Guide']
   },
   {
     id: '2',
-    title: 'Evening Quran Session - Europe',
-    description: 'Time zone-friendly session for European students. Beginner to advanced levels learning together.',
+    title: 'European Evening Session',
+    description: 'Time zone-friendly session for European students.',
     instructor: mockInstructor,
     schedule: {
       day: 'Wednesday',
-      startTime: '20:00', // 8 PM CET
-      endTime: '21:30',   // 9:30 PM CET
+      startTime: '20:00',
+      endTime: '21:30',
       timezone: 'CET'
     },
     region: 'Europe',
@@ -139,102 +134,16 @@ const mockSessions: Session[] = [
       joinUrl: 'https://zoom.us/j/987654321?pwd=example',
       hostUrl: 'https://zoom.us/s/987654321?zak=example',
       password: 'tajweed123',
-      startTime: '2025-09-04T20:00:00Z', // Day after tomorrow at 8 PM CET
+      startTime: '2025-09-04T20:00:00Z',
       duration: 90,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=987654321&pwd=tajweed123',
       webLink: 'https://zoom.us/wc/join/987654321?pwd=tajweed123',
-      generatedAt: '2025-09-04T18:00:00Z', // Will be generated 2 hours before
+      generatedAt: '2025-09-04T18:00:00Z',
       isReady: false
     },
-    materials: ['Advanced Tajweed Book', 'Audio Recordings']
-  },
-  {
-    id: '3',
-    title: 'Weekend Morning Session - Asia Pacific',
-    description: 'Weekend Quran session for Asia Pacific region. Mixed levels with focus on memorization techniques.',
-    instructor: mockInstructor,
-    schedule: {
-      day: 'Saturday',
-      startTime: '02:00', // 10 AM JST/11 AM AEDT
-      endTime: '03:30',   // 11:30 AM JST/12:30 PM AEDT
-      timezone: 'JST'
-    },
-    region: 'Asia Pacific',
-    levelRange: 'mixed',
-    ageGroup: 'all',
-    maxStudents: 8,
-    enrolledStudents: 6,
-    price: 40,
-    category: 'memorization',
-    status: 'active',
-    zoomMeeting: {
-      id: 'zm3',
-      sessionId: '3',
-      meetingId: '456789123',
-      joinUrl: 'https://zoom.us/j/456789123?pwd=example',
-      hostUrl: 'https://zoom.us/s/456789123?zak=example',
-      password: 'hifz123',
-      startTime: '2025-09-07T02:00:00Z', // Saturday early morning for Asia Pacific
-      duration: 90,
-      recordingEnabled: true,
-      status: 'scheduled',
-      nativeAppLink: 'zoommtg://zoom.us/join?confno=456789123&pwd=hifz123',
-      webLink: 'https://zoom.us/wc/join/456789123?pwd=hifz123',
-      generatedAt: '2025-09-07T00:00:00Z', // Generated 2 hours before
-      isReady: true
-    },
-    materials: ['Memorization Guide', 'Progress Tracker']
-  },
-  {
-    id: '4',
-    title: 'Test Session - Starting Soon',
-    description: 'Demo session to test the "ready" status - starts in 5 minutes',
-    instructor: mockInstructor,
-    schedule: {
-      day: 'Today',
-      startTime: (() => {
-        const now = new Date();
-        const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60000);
-        return fiveMinutesFromNow.toTimeString().slice(0, 5); // HH:MM format
-      })(),
-      endTime: (() => {
-        const now = new Date();
-        const oneHourFromNow = new Date(now.getTime() + 65 * 60000);
-        return oneHourFromNow.toTimeString().slice(0, 5); // HH:MM format
-      })(),
-      timezone: 'Local'
-    },
-    region: 'North America',
-    levelRange: 'mixed',
-    ageGroup: 'all',
-    maxStudents: 10,
-    enrolledStudents: 1,
-    price: 30,
-    category: 'recitation',
-    status: 'active',
-    zoomMeeting: {
-      id: 'zm4',
-      sessionId: '4',
-      meetingId: '111222333',
-      joinUrl: 'https://zoom.us/j/111222333?pwd=test123',
-      hostUrl: 'https://zoom.us/s/111222333?zak=test',
-      password: 'test123',
-      startTime: (() => {
-        const now = new Date();
-        const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60000);
-        return fiveMinutesFromNow.toISOString();
-      })(),
-      duration: 60,
-      recordingEnabled: true,
-      status: 'scheduled',
-      nativeAppLink: 'zoommtg://zoom.us/join?confno=111222333&pwd=test123',
-      webLink: 'https://zoom.us/wc/join/111222333?pwd=test123',
-      generatedAt: new Date().toISOString(),
-      isReady: true
-    },
-    materials: ['Test Materials']
+    materials: ['Advanced Tajweed Book']
   }
 ];
 
@@ -259,64 +168,53 @@ const mockRecitationEntries: RecitationEntry[] = [
     duration: 15,
     notes: 'Focused on pronunciation and rhythm',
     createdAt: '2024-02-01T08:00:00Z'
-  },
-  {
-    id: '2',
-    userId: '1',
-    date: '2024-02-02',
-    surahName: 'Al-Baqarah',
-    verses: '1-20',
-    duration: 30,
-    notes: 'Working on memorizing the first verses',
-    createdAt: '2024-02-02T09:00:00Z'
-  },
-  {
-    id: '3',
-    userId: '1',
-    date: '2024-02-03',
-    surahName: 'Al-Ikhlas',
-    verses: 'complete',
-    duration: 10,
-    notes: 'Review session before sleep',
-    createdAt: '2024-02-03T22:00:00Z'
   }
 ];
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { toasts, removeToast, success, error } = useToast();
 
-  const handleLogin = (email: string, password: string) => {
-    // Mock login logic
-    console.log('Login attempt:', { email, password });
-    
-    // Simulate instructor login check
-    if (email.includes('instructor')) {
-      setCurrentPage('instructor-dashboard');
-    } else {
-      setCurrentUser(mockUser);
-      setCurrentPage('student-dashboard');
-    }
-  };
-
-  const handleSignup = (userData: SignupFormData) => {
+  const handleSignup = async (userData: SignupFormData) => {
     console.log('Signup attempt:', userData);
     
-    const newUser: User = {
-      ...mockUser,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email,
-      telephone: userData.telephone,
-      country: userData.country,
-      dateOfBirth: userData.dateOfBirth,
-      userType: userData.userType,
-      age: userData.age,
-      parentInfo: userData.parentInfo
-    };
-    
-    setCurrentUser(newUser);
-    setCurrentPage('student-dashboard');
+    try {
+      // Map SignupFormData to RegisterRequest format
+      const registerData: RegisterRequest = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        userType: userData.userType,
+        telephone: userData.telephone,
+        country: userData.country,
+        dateOfBirth: userData.dateOfBirth,
+        age: userData.age, // Include age field
+        timezone: userData.timezone, // Include timezone
+        parentInfo: userData.parentInfo
+      };
+
+      // Call the backend registration API
+      const response = await authService.register(registerData);
+      
+      console.log('Registration response:', response);
+      
+      if (response.success && response.data) {
+        // Successfully registered - set the user from backend response
+        setCurrentUser(response.data.user);
+        setCurrentPage('student-dashboard');
+        success('Welcome to Ismail Academy!', 'Your account has been created successfully.');
+        console.log('Registration successful:', response.message);
+      } else {
+        // Registration failed - show error message
+        console.error('Registration failed:', response.message || response.error);
+        error('Registration Failed', response.message || response.error || 'An unknown error occurred.');
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      error('Registration Error', 'Registration failed. Please check your connection and try again.');
+    }
   };
 
   const handleLogout = () => {
@@ -394,9 +292,9 @@ function App() {
       
       {currentPage === 'login' && (
         <LoginForm
-          onLogin={handleLogin}
           onBack={() => setCurrentPage('home')}
           onSignupClick={() => setCurrentPage('signup')}
+          onLoginSuccess={() => setCurrentPage('student-dashboard')}
         />
       )}
       
@@ -433,6 +331,21 @@ function App() {
           onLogout={handleLogout}
         />
       )}
+      
+      {/* Toast notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            id={toast.id}
+            type={toast.type}
+            title={toast.title}
+            message={toast.message}
+            duration={toast.duration}
+            onClose={removeToast}
+          />
+        ))}
+      </div>
     </div>
   );
 }

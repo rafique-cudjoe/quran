@@ -40,6 +40,7 @@ export interface SignupFormData {
     country: string;
     dateOfBirth: string;
     quranLevel: string;
+    timezone?: string;
 
     // Step 3: Parent/Guardian Information (if under 18)
     parentInfo?: {
