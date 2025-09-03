@@ -557,11 +557,11 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
                               <div className="w-16 bg-slate-200 rounded-full h-2">
                                 <div 
                                   className="bg-emerald-500 h-2 rounded-full" 
-                                  style={{ width: `${Math.min((student.progress.weeklyProgress / student.progress.weeklyGoal) * 100, 100)}%` }}
+                                  style={{ width: `${Math.min(student.progress.weeklyGoal > 0 ? (student.progress.weeklyProgress / student.progress.weeklyGoal) * 100 : 0, 100)}%` }}
                                 />
                               </div>
                               <span className="text-sm text-slate-600">
-                                {Math.round((student.progress.weeklyProgress / student.progress.weeklyGoal) * 100)}%
+                                {student.progress.weeklyGoal > 0 ? Math.round((student.progress.weeklyProgress / student.progress.weeklyGoal) * 100) : 0}%
                               </span>
                             </div>
                           </td>

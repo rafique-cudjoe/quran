@@ -202,7 +202,35 @@ function App() {
       
       if (response.success && response.data) {
         // Successfully registered - set the user from backend response
-        setCurrentUser(response.data.user);
+        // Ensure the user object has all required properties for the dashboard
+        const userData: User = {
+          ...response.data.user,
+          selectedSessions: [],
+          subscription: {
+            id: '1',
+            plan: 'free' as const,
+            status: 'active' as const,
+            startDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+            price: 0,
+            autoRenew: false,
+            sessionsIncluded: 0,
+            sessionsUsed: 0
+          },
+          progress: {
+            totalHours: 0,
+            completedLessons: 0,
+            currentSurah: '',
+            memorizedVerses: 0,
+            achievements: [],
+            weeklyGoal: 5,
+            weeklyProgress: 0
+          },
+          dateJoined: new Date().toISOString(),
+          timezone: response.data.user.timezone || 'UTC'
+        };
+        
+        setCurrentUser(userData);
         setCurrentPage('student-dashboard');
         success('Welcome to Ismail Academy!', 'Your account has been created successfully.');
         console.log('Registration successful:', response.message);
@@ -309,7 +337,7 @@ function App() {
         <StudentDashboard
           user={currentUser}
           availableSessions={mockSessions}
-          upcomingSessions={mockSessions.filter(s => currentUser.selectedSessions.includes(s.id))}
+          upcomingSessions={mockSessions.filter(s => currentUser.selectedSessions?.includes(s.id) || false)}
           notifications={mockNotifications}
           recitationEntries={mockRecitationEntries}
           onJoinSession={handleJoinSession}
@@ -333,19 +361,22 @@ function App() {
       )}
       
       {/* Toast notifications */}
-      <div className="fixed top-4 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full sm:w-auto">
-        {toasts.map((toast) => (
-          <Toast
-            key={toast.id}
-            id={toast.id}
-            type={toast.type}
-            title={toast.title}
-            message={toast.message}
-            duration={toast.duration}
-            onClose={removeToast}
-          />
-        ))}
+      <div className="fixed top-4 right-4 z-[9999] pointer-events-none">
+        <div className="flex flex-col space-y-2 w-80 max-w-[calc(100vw-2rem)]">
+          {toasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              id={toast.id}
+              type={toast.type}
+              title={toast.title}
+              message={toast.message}
+              duration={toast.duration}
+              onClose={removeToast}
+            />
+          ))}
+        </div>
       </div>
+
     </div>
   );
 }

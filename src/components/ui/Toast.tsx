@@ -55,38 +55,40 @@ export const Toast: React.FC<ToastProps> = ({
     <div
       className={cn(
         // Base styles
-        'w-full bg-white shadow-lg rounded-lg pointer-events-auto border-l-4',
+        'w-full bg-white shadow-xl rounded-lg pointer-events-auto border-l-4 overflow-hidden',
         // Animation styles
         'transform transition-all duration-300 ease-in-out',
         // Color styles
         colorClasses[type],
         // Visibility styles
         isVisible 
-          ? 'translate-x-0 opacity-100' 
-          : 'translate-x-full opacity-0'
+          ? 'translate-x-0 opacity-100 scale-100' 
+          : 'translate-x-full opacity-0 scale-95'
       )}
+      style={{ minWidth: '300px' }}
     >
       <div className="p-4">
-        <div className="flex items-start">
-          <div className={cn('flex-shrink-0', iconColorClasses[type])}>
+        <div className="flex items-start space-x-3">
+          <div className={cn('flex-shrink-0 mt-0.5', iconColorClasses[type])}>
             {icons[type]}
           </div>
-          <div className="ml-3 w-0 flex-1 min-w-0">
-            <p className="text-sm font-medium break-words">{title}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-900 break-words">{title}</p>
             {message && (
-              <p className="mt-1 text-sm opacity-90 break-words">{message}</p>
+              <p className="mt-1 text-sm text-gray-600 break-words">{message}</p>
             )}
           </div>
-          <div className="ml-4 flex-shrink-0 flex">
+          <div className="flex-shrink-0">
             <button
-              className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 rounded-md p-1"
+              type="button"
+              className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={() => {
                 setIsVisible(false);
                 setTimeout(() => onClose(id), 300);
               }}
               aria-label="Close notification"
             >
-              <X className="w-4 h-4" />
+              <X className="h-5 w-5" />
             </button>
           </div>
         </div>

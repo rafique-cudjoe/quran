@@ -54,7 +54,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     session: null
   });
   
-  const progressPercentage = Math.round((user.progress.weeklyProgress / user.progress.weeklyGoal) * 100);
+  const progressPercentage = user.progress.weeklyGoal > 0 
+    ? Math.round((user.progress.weeklyProgress / user.progress.weeklyGoal) * 100)
+    : 0;
   
   const handleEnrollClick = (session: Session) => {
     setPaymentModal({ isOpen: true, session });
