@@ -57,6 +57,26 @@ export const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({
     const statusInfo = getMeetingStatusInfo(session);
     const hasZoomApp = zoomAppAvailable[session.id];
     
+    // Handle cancelled sessions
+    if (session.status === 'cancelled') {
+      return {
+        variant: 'outline' as const,
+        disabled: true,
+        text: 'Session Cancelled',
+        icon: <Clock className="w-4 h-4" />
+      };
+    }
+    
+    // Handle ended sessions
+    if (session.zoomMeeting?.status === 'ended') {
+      return {
+        variant: 'outline' as const,
+        disabled: true,
+        text: 'Session Ended',
+        icon: <Clock className="w-4 h-4" />
+      };
+    }
+    
     if (!statusInfo.canJoin) {
       return {
         variant: 'outline' as const,
@@ -70,7 +90,7 @@ export const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({
       return {
         variant: 'primary' as const,
         disabled: false,
-        text: hasZoomApp ? 'Join with App' : 'Join in Browser',
+        text: hasZoomApp ? 'Join Live Session' : 'Join in Browser',
         icon: hasZoomApp ? <Smartphone className="w-4 h-4" /> : <Globe className="w-4 h-4" />
       };
     }
@@ -120,11 +140,15 @@ export const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({
                       <Badge 
                         variant={
                           statusInfo.status === 'live' ? 'success' : 
-                          statusInfo.status === 'ready' ? 'warning' : 'info'
+                          statusInfo.status === 'ready' ? 'warning' : 
+                          session.status === 'cancelled' ? 'danger' :
+                          session.zoomMeeting?.status === 'ended' ? 'default' : 'info'
                         }
                       >
-                        {statusInfo.status === 'live' ? 'LIVE' : 
-                         statusInfo.status === 'ready' ? 'READY' : 'UPCOMING'}
+                        {statusInfo.status === 'live' ? 'LIVE - JOIN NOW' : 
+                         statusInfo.status === 'ready' ? 'READY TO JOIN' : 
+                         session.status === 'cancelled' ? 'CANCELLED' :
+                         session.zoomMeeting?.status === 'ended' ? 'SESSION ENDED' : 'UPCOMING'}
                       </Badge>
                     </div>
                     
@@ -136,6 +160,7 @@ export const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
                         <span>{session.schedule.startTime} - {session.schedule.endTime} ({session.schedule.timezone})</span>
+                        <span className="text-xs text-slate-500">• {session.zoomMeeting?.duration || 120} min</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />

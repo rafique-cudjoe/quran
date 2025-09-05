@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '../../hooks/useToast';
 import { 
   Calendar, 
   Clock, 
@@ -27,7 +28,8 @@ import {
   Star,
   ChevronRight,
   AlertCircle,
-  Info
+  Info,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardContent, CardHeader } from '../ui/Card';
@@ -35,7 +37,9 @@ import { Badge } from '../ui/Badge';
 import { PaymentModal } from '../ui/PaymentModal';
 import { RecitationTracker } from '../ui/RecitationTracker';
 import { UpcomingSessions } from '../ui/UpcomingSessions';
-import { Session, User as UserType, Notification, Payment, RecitationEntry } from '../../types';
+import { TestimonialModal } from '../ui/TestimonialModal';
+import { TestimonialService } from '../../services/testimonialService';
+import { Session, User as UserType, Notification, Payment, RecitationEntry, Testimonial } from '../../types';
 
 interface StudentDashboardProps {
   user: UserType;
@@ -66,6 +70,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     session: null
   });
   
+  const [testimonialModal, setTestimonialModal] = useState(false);
+  const { success, error } = useToast();
+  
   // Profile editing states
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -81,6 +88,18 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const progressPercentage = user.progress.weeklyGoal > 0 
     ? Math.round((user.progress.weeklyProgress / user.progress.weeklyGoal) * 100)
     : 0;
+
+  // Handle testimonial submission
+  const handleTestimonialSubmit = async (testimonialData: Omit<Testimonial, 'id' | 'createdAt' | 'updatedAt' | 'approved' | 'featured'>) => {
+    try {
+      await TestimonialService.submitTestimonial(testimonialData);
+      success('Thank you for your testimonial! It will be reviewed and may be featured on our website.');
+      setTestimonialModal(false);
+    } catch (err) {
+      console.error('Error submitting testimonial:', err);
+      error('Failed to submit testimonial. Please try again.');
+    }
+  };
   
   const handleEnrollClick = (session: Session) => {
     setPaymentModal({ isOpen: true, session });
@@ -380,6 +399,47 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                         <p className="text-xs text-green-500 mt-1">3 days ago</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial Section */}
+            <div className="bg-white/70 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/30">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800">Share Your Experience</h3>
+                    <p className="text-sm text-slate-600">Help others discover our Quran learning program</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setTestimonialModal(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all duration-200 font-medium text-sm flex items-center space-x-2"
+                >
+                  <Star className="w-4 h-4" />
+                  <span>Write Testimonial</span>
+                </button>
+              </div>
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border border-yellow-200">
+                <p className="text-sm text-slate-700 mb-3">
+                  <strong>Share your success story!</strong> Your testimonial could inspire other students to begin their Quran learning journey. Tell others about your experience and progress.
+                </p>
+                <div className="flex items-center space-x-4 text-xs text-slate-600">
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-3 h-3 text-yellow-500" />
+                    <span>Rate your experience</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <MessageSquare className="w-3 h-3 text-blue-500" />
+                    <span>Share your story</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="w-3 h-3 text-green-500" />
+                    <span>Help others</span>
                   </div>
                 </div>
               </div>
@@ -945,6 +1005,16 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         isOpen={paymentModal.isOpen}
         onClose={() => setPaymentModal({ isOpen: false, session: null })}
         onPaymentComplete={handlePaymentComplete}
+      />
+      
+      {/* Testimonial Modal */}
+      <TestimonialModal
+        isOpen={testimonialModal}
+        onClose={() => setTestimonialModal(false)}
+        onSubmit={handleTestimonialSubmit}
+        userName={`${user.firstName} ${user.lastName}`}
+        userEmail={user.email}
+        userId={user.id}
       />
     </div>
   );

@@ -87,7 +87,7 @@ export interface Session {
     enrolledStudents: number;
     price: number;
     category: 'recitation' | 'memorization' | 'tajweed' | 'translation' | 'islamic-studies';
-    status: 'active' | 'inactive' | 'full';
+    status: 'active' | 'inactive' | 'full' | 'cancelled';
     zoomMeeting?: ZoomMeeting;
     materials: string[];
 }
@@ -179,10 +179,37 @@ export interface RecitationEntry {
     userId: string;
     date: string;
     surahName: string;
-    verses: string; // e.g., "1-10" or "complete"
+    verses: string;
     duration: number; // in minutes
-    notes?: string;
+    notes: string;
     createdAt: string;
+}
+
+export interface Recommendation {
+    id: string;
+    userId: string;
+    title: string;
+    description: string;
+    category: 'feature' | 'content' | 'instructor' | 'technical' | 'general';
+    priority: 'low' | 'medium' | 'high';
+    status: 'pending' | 'reviewed' | 'implemented' | 'rejected';
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface Testimonial {
+    id?: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    rating: 1 | 2 | 3 | 4 | 5; // Star rating
+    title: string;
+    message: string;
+    course?: string; // Which course/session they're testimonial about
+    approved: boolean; // Whether it's approved for public display
+    featured: boolean; // Whether to feature on homepage
+    createdAt: string;
+    updatedAt?: string;
 }
 
 export interface SalatVideo {

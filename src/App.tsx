@@ -80,7 +80,7 @@ const mockSessions: Session[] = [
     schedule: {
       day: 'Monday',
       startTime: '23:00',
-      endTime: '24:00',
+      endTime: '01:00',
       timezone: 'EST'
     },
     region: 'North America',
@@ -99,7 +99,7 @@ const mockSessions: Session[] = [
       hostUrl: 'https://zoom.us/s/123456789?zak=example',
       password: 'quran123',
       startTime: '2025-09-03T23:00:00Z',
-      duration: 60,
+      duration: 120,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=123456789&pwd=quran123',
@@ -117,7 +117,7 @@ const mockSessions: Session[] = [
     schedule: {
       day: 'Wednesday',
       startTime: '20:00',
-      endTime: '21:30',
+      endTime: '22:00',
       timezone: 'CET'
     },
     region: 'Europe',
@@ -136,7 +136,7 @@ const mockSessions: Session[] = [
       hostUrl: 'https://zoom.us/s/987654321?zak=example',
       password: 'tajweed123',
       startTime: '2025-09-04T20:00:00Z',
-      duration: 90,
+      duration: 120,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=987654321&pwd=tajweed123',
@@ -154,7 +154,7 @@ const mockSessions: Session[] = [
     schedule: {
       day: 'Tuesday',
       startTime: '19:00',
-      endTime: '20:00',
+      endTime: '21:00',
       timezone: 'EST'
     },
     region: 'North America',
@@ -173,7 +173,7 @@ const mockSessions: Session[] = [
       hostUrl: 'https://zoom.us/s/456789123?zak=example',
       password: 'hifz123',
       startTime: '2025-09-04T19:00:00Z',
-      duration: 60,
+      duration: 120,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=456789123&pwd=hifz123',
@@ -191,7 +191,7 @@ const mockSessions: Session[] = [
     schedule: {
       day: 'Saturday',
       startTime: '10:00',
-      endTime: '11:00',
+      endTime: '12:00',
       timezone: 'EST'
     },
     region: 'North America',
@@ -210,7 +210,7 @@ const mockSessions: Session[] = [
       hostUrl: 'https://zoom.us/s/789123456?zak=example',
       password: 'family123',
       startTime: '2025-09-06T10:00:00Z',
-      duration: 60,
+      duration: 120,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=789123456&pwd=family123',
@@ -228,7 +228,7 @@ const mockSessions: Session[] = [
     schedule: {
       day: 'Thursday',
       startTime: '21:00',
-      endTime: '22:30',
+      endTime: '23:00',
       timezone: 'EST'
     },
     region: 'North America',
@@ -247,7 +247,7 @@ const mockSessions: Session[] = [
       hostUrl: 'https://zoom.us/s/321654987?zak=example',
       password: 'advanced123',
       startTime: '2025-09-05T21:00:00Z',
-      duration: 90,
+      duration: 120,
       recordingEnabled: true,
       status: 'scheduled',
       nativeAppLink: 'zoommtg://zoom.us/join?confno=321654987&pwd=advanced123',
@@ -256,6 +256,117 @@ const mockSessions: Session[] = [
       isReady: true
     },
     materials: ['Quran', 'Advanced Tajweed Manual', 'Audio Recordings']
+  },
+  {
+    id: '6',
+    title: 'Morning Recitation Session',
+    description: 'Beautiful morning session for Quran recitation practice.',
+    instructor: mockInstructor,
+    schedule: {
+      day: 'Monday',
+      startTime: '08:00',
+      endTime: '10:00',
+      timezone: 'EST'
+    },
+    region: 'North America',
+    levelRange: 'mixed',
+    ageGroup: 'all',
+    maxStudents: 15,
+    enrolledStudents: 12,
+    price: 30,
+    category: 'recitation',
+    status: 'active',
+    zoomMeeting: {
+      id: 'zm6',
+      sessionId: '6',
+      meetingId: '654321789',
+      joinUrl: 'https://zoom.us/j/654321789?pwd=example',
+      hostUrl: 'https://zoom.us/s/654321789?zak=example',
+      password: 'morning123',
+      startTime: '2025-09-02T08:00:00Z',
+      duration: 120,
+      recordingEnabled: true,
+      status: 'ended',
+      nativeAppLink: 'zoommtg://zoom.us/join?confno=654321789&pwd=morning123',
+      webLink: 'https://zoom.us/wc/join/654321789?pwd=morning123',
+      generatedAt: '2025-09-02T06:00:00Z',
+      isReady: false
+    },
+    materials: ['Quran', 'Recitation Guide']
+  },
+  {
+    id: '7',
+    title: 'Islamic Studies Workshop',
+    description: 'Comprehensive Islamic studies session covering history and teachings.',
+    instructor: mockInstructor,
+    schedule: {
+      day: 'Friday',
+      startTime: '15:00',
+      endTime: '17:00',
+      timezone: 'EST'
+    },
+    region: 'North America',
+    levelRange: 'mixed',
+    ageGroup: 'adult',
+    maxStudents: 20,
+    enrolledStudents: 8,
+    price: 25,
+    category: 'islamic-studies',
+    status: 'cancelled',
+    zoomMeeting: {
+      id: 'zm7',
+      sessionId: '7',
+      meetingId: '987123654',
+      joinUrl: 'https://zoom.us/j/987123654?pwd=example',
+      hostUrl: 'https://zoom.us/s/987123654?zak=example',
+      password: 'studies123',
+      startTime: '2025-09-06T15:00:00Z',
+      duration: 120,
+      recordingEnabled: true,
+      status: 'scheduled',
+      nativeAppLink: 'zoommtg://zoom.us/join?confno=987123654&pwd=studies123',
+      webLink: 'https://zoom.us/wc/join/987123654?pwd=studies123',
+      generatedAt: '2025-09-06T13:00:00Z',
+      isReady: false
+    },
+    materials: ['Islamic History Book', 'Hadith Collections']
+  },
+  {
+    id: '8',
+    title: 'Live Interactive Session',
+    description: 'Currently ongoing interactive Quran learning session.',
+    instructor: mockInstructor,
+    schedule: {
+      day: 'Wednesday',
+      startTime: '14:00',
+      endTime: '16:00',
+      timezone: 'EST'
+    },
+    region: 'North America',
+    levelRange: 'mixed',
+    ageGroup: 'all',
+    maxStudents: 18,
+    enrolledStudents: 16,
+    price: 35,
+    category: 'recitation',
+    status: 'active',
+    zoomMeeting: {
+      id: 'zm8',
+      sessionId: '8',
+      meetingId: '147258369',
+      joinUrl: 'https://zoom.us/j/147258369?pwd=example',
+      hostUrl: 'https://zoom.us/s/147258369?zak=example',
+      password: 'live123',
+      startTime: '2025-09-05T14:00:00Z',
+      duration: 120,
+      recordingEnabled: true,
+      status: 'started',
+      nativeAppLink: 'zoommtg://zoom.us/join?confno=147258369&pwd=live123',
+      webLink: 'https://zoom.us/wc/join/147258369?pwd=live123',
+      generatedAt: '2025-09-05T12:00:00Z',
+      isReady: true
+    },
+    materials: ['Quran', 'Interactive Worksheets']
   }
 ];
 
@@ -459,7 +570,6 @@ function App() {
           notifications={mockNotifications}
           recitationEntries={mockRecitationEntries}
           onJoinSession={handleJoinSession}
-          onEnrollInSession={handleEnrollInSession}
           onPaymentComplete={handlePaymentComplete}
           onAddRecitation={handleAddRecitation}
           onLogout={handleLogout}
