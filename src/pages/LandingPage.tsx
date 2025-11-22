@@ -155,174 +155,164 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-8 pb-20 overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }}></div>
-        </div>
+      <section className="relative py-12 lg:py-16 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Badge */}
-          <div className="text-center mb-8 animate-fade-in">
-            <div className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full text-sm font-semibold shadow-lg mb-4">
-              <Star className="w-4 h-4 mr-2 animate-spin" style={{ animationDuration: '3s' }} />
-              Welcome to Ismail Academy
-            </div>
-          </div>
-
-          {/* Main Hero Content */}
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Content - Text */}
-            <div className="lg:col-span-5 text-center lg:text-left space-y-6">
-              <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 leading-tight tracking-tight">
-                Learn the Holy{' '}
-                <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent drop-shadow-sm">
-                  Quran
-                </span>
-              </h1>
-              
-              <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Experience personalized online Quran learning with <strong className="text-slate-900">Muallim Adubofour Ismael</strong> - 
-                a certified instructor dedicated to helping you master Quranic recitation and Tajweed.
-              </p>
-
-              <div className="flex items-center justify-center lg:justify-start gap-3 text-sm text-slate-600">
-                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium">Live Sessions Available</span>
+            {/* Left Column - Text Content */}
+            <div className="order-2 lg:order-1 space-y-8">
+              <div className="space-y-6">
+                <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  <Star className="w-4 h-4 mr-2" />
+                  Join 10,000+ students worldwide
                 </div>
-                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                  <Users className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium">10,000+ Students</span>
-                </div>
+
+                <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-tight">
+                  Learn the Holy{' '}
+                  <span className="bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
+                    Quran
+                  </span>{' '}
+                  Online
+                </h1>
+
+                <p className="text-lg lg:text-xl text-slate-600 leading-relaxed">
+                  Join live interactive Quran sessions scheduled for your time zone, where students
+                  of all skill levels learn together with certified instructors. <strong>Plus, watch our complete Salat prayer tutorials
+                  absolutely free</strong> - no registration required!
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
-                <Button 
-                  size="lg" 
-                  onClick={onGetStarted} 
-                  className="px-10 py-6 text-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 transition-all duration-200"
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  size="lg"
+                  onClick={onGetStarted}
+                  className="px-8 bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white shadow-lg hover:shadow-xl transition-all"
                 >
                   Start Learning Today
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="px-10 py-6 text-lg border-2 border-blue-600 text-blue-700 hover:bg-blue-50 hover:border-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" 
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-8 border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
                   onClick={onWatchSalatVideos}
                 >
                   <Play className="w-5 h-5 mr-2" />
                   Free Salat Videos
                 </Button>
               </div>
+
+              {/* Trust Indicators */}
+              <div className="flex flex-wrap items-center gap-6 pt-4">
+                <div className="flex items-center space-x-2">
+                  <div className="flex -space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">A</div>
+                    <div className="w-8 h-8 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">F</div>
+                    <div className="w-8 h-8 rounded-full bg-indigo-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">M</div>
+                  </div>
+                  <span className="text-sm text-slate-600">10,000+ active students</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                  <span className="text-sm text-slate-600 ml-2">4.9/5 rating</span>
+                </div>
+              </div>
             </div>
 
-            {/* Right Content - Video */}
-            <div className="lg:col-span-7">
-              <div className="relative group">
-                {/* Video Container */}
-                <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl shadow-2xl overflow-hidden ring-1 ring-slate-200">
-                  <div className="relative aspect-video">
-                    <video 
-                      id="hero-video"
-                      className="w-full h-full object-cover"
-                      autoPlay 
-                      muted 
-                      loop
-                      playsInline
-                    >
-                      <source src="/video.mp4" type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                    
-                    {/* Gradient Overlay for Better Text Visibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none"></div>
-                    
-                    {/* Instructor Info Badge - Top Left */}
-                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                      <div className="flex items-center space-x-3 bg-white/98 backdrop-blur-md rounded-xl px-4 py-3 shadow-2xl border border-slate-100">
-                        <div className="relative">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center ring-2 ring-blue-100">
-                            <User className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-slate-900 text-sm">Muallim Adubofour Ismael</h3>
-                          <p className="text-xs text-slate-600 font-medium">Certified Quran Instructor</p>
-                        </div>
+            {/* Right Column - Video */}
+            <div className="order-1 lg:order-2 flex justify-center lg:justify-end items-center">
+              <div className="relative w-full max-w-sm lg:max-w-md">
+                {/* Video Container with decorative elements */}
+                <div className="relative z-10">
+                  {/* Main video card */}
+                  <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl p-3 sm:p-4 border border-slate-200">
+                    {/* Video element - 480x800 aspect ratio maintained */}
+                    <div className="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900" style={{ aspectRatio: '480/800' }}>
+                      <video
+                        id="landing-hero-video"
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                      >
+                        <source src="/video.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+
+                      {/* Video overlay badge */}
+                      <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+                        <Badge variant="success" className="backdrop-blur-sm bg-green-500/90 text-white shadow-lg">
+                          <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                          Live Demo
+                        </Badge>
+                        <button
+                          onClick={onWatchSalatVideos}
+                          className="bg-white/90 backdrop-blur-sm hover:bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all hover:shadow-xl"
+                        >
+                          <Play className="w-4 h-4 inline mr-1" />
+                          Watch Full
+                        </button>
                       </div>
-                      <Badge variant="success" className="shadow-lg px-3 py-1.5 text-xs font-bold">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                          LIVE
-                        </div>
-                      </Badge>
+
+                      {/* Audio Control Button */}
+                      <div className="absolute bottom-4 right-4">
+                        <button
+                          onClick={() => {
+                            const video = document.getElementById('landing-hero-video') as HTMLVideoElement;
+                            if (video) {
+                              video.muted = !video.muted;
+                            }
+                          }}
+                          className="bg-white/95 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all hover:shadow-xl hover:scale-110"
+                          aria-label="Toggle sound"
+                        >
+                          <svg className="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Video Controls - Bottom Right */}
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2 z-10">
-                      <button
-                        onClick={() => {
-                          const video = document.getElementById('hero-video') as HTMLVideoElement;
-                          if (video) {
-                            video.muted = !video.muted;
-                          }
-                        }}
-                        className="group/btn bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-110"
-                        aria-label="Toggle mute"
-                      >
-                        <svg className="w-5 h-5 text-slate-700 group-hover/btn:text-blue-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => {
-                          const video = document.getElementById('hero-video') as HTMLVideoElement;
-                          if (video) {
-                            if (video.paused) {
-                              video.play();
-                            } else {
-                              video.pause();
-                            }
-                          }
-                        }}
-                        className="group/btn bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-110"
-                        aria-label="Play/Pause"
-                      >
-                        <Play className="w-5 h-5 text-slate-700 group-hover/btn:text-blue-600 transition-colors" />
-                      </button>
+                    {/* Video caption */}
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-700 to-blue-800 rounded-full flex items-center justify-center">
+                          <User className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-slate-900 text-sm">Muallim Adubofour Ismael</h3>
+                          <p className="text-xs text-slate-500">Quran Instructor</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-slate-500">Duration</p>
+                        <p className="text-sm font-semibold text-slate-900">45 min</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Decorative Elements */}
-                <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500"></div>
-                <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500"></div>
-              </div>
+                {/* Decorative background elements */}
+                <div className="absolute -top-6 -right-6 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute -bottom-6 -left-6 w-64 h-64 bg-gradient-to-br from-teal-400/20 to-indigo-600/20 rounded-full blur-3xl -z-10"></div>
 
-              {/* Trust Indicators Below Video */}
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-slate-600">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span className="font-medium">Certified Instructor</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span className="font-medium">Time Zone Based</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span className="font-medium">Interactive Sessions</span>
-                </div>
+                {/* Floating accent elements */}
+                <div className="absolute top-1/4 -left-4 w-20 h-20 bg-blue-500/10 rounded-lg rotate-12 -z-10"></div>
+                <div className="absolute bottom-1/4 -right-4 w-16 h-16 bg-teal-500/10 rounded-lg -rotate-12 -z-10"></div>
               </div>
             </div>
 
           </div>
         </div>
+
+        {/* Bottom wave decoration */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
       </section>
 
       {/* Features Section */}
