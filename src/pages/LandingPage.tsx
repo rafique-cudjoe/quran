@@ -234,12 +234,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
                     <div className="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900">
                       <video
                         className="w-full h-auto max-h-[70vh] object-contain"
-                        src="/video.mp4"
                         autoPlay
                         loop
                         muted
                         playsInline
+                        preload="auto"
                       >
+                        <source src="/video.mp4" type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
 
