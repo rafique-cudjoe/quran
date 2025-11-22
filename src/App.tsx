@@ -4,7 +4,7 @@ import { SalatVideosPage } from './pages/SalatVideosPage';
 import { LoginForm } from './components/auth/LoginForm';
 import { EnhancedSignupForm } from './components/auth/SignupForm';
 import { StudentDashboard } from './components/dashboard/StudentDashboard';
-import { InstructorDashboard } from './components/dashboard/InstructorDashboard';
+import { InstructorDashboard } from './components/dashboard/InstructorDashboardNew';
 import { Toast } from './components/ui/Toast';
 import { User, Session, Instructor, Notification, Payment, RecitationEntry, SignupFormData } from './types';
 import { authService, RegisterRequest } from './services/authService';
@@ -67,22 +67,6 @@ const mockUser: User = {
     weeklyGoal: 10,
     weeklyProgress: 7
   }
-};
-
-// Helper function to get date for specific day of week
-const getDateForDay = (dayName: string, offset: number = 0): string => {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const today = new Date();
-  today.setDate(today.getDate() + offset);
-  
-  const targetDayIndex = days.indexOf(dayName);
-  const currentDayIndex = today.getDay();
-  
-  const daysUntilTarget = (targetDayIndex - currentDayIndex + 7) % 7;
-  const targetDate = new Date(today);
-  targetDate.setDate(today.getDate() + daysUntilTarget);
-  
-  return targetDate.toISOString().split('T')[0];
 };
 
 // Helper function to create session instances for Mon-Thu
@@ -385,11 +369,6 @@ function AppContent() {
     window.open('https://zoom.us/j/meeting-id', '_blank');
   };
 
-  const handleCreateSession = (sessionData: Partial<Session>) => {
-    console.log('Creating session:', sessionData);
-    success('Session Created', 'Your session has been created successfully.');
-  };
-
   const handleDeleteSession = (sessionId: string) => {
     console.log('Deleting session:', sessionId);
     success('Session Deleted', 'The session has been removed.');
@@ -518,19 +497,27 @@ function AppContent() {
         <Route 
           path="/instructor-dashboard" 
           element={
-            currentUser && currentUser.role === 'instructor' ? (
-              <InstructorDashboard
-                instructor={mockInstructor}
-                sessions={mockSessions}
-                students={[mockUser]}
-                onCreateSession={handleCreateSession}
-                onDeleteSession={handleDeleteSession}
-                onStartSession={handleStartSession}
-                onLogout={handleLogout}
-              />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            (() => {
+              // During login process, check both currentUser and localStorage
+              const userFromStorage = localStorage.getItem('quran-academy-user');
+              const fallbackUser = userFromStorage ? JSON.parse(userFromStorage) : null;
+              const effectiveUser = currentUser || fallbackUser;
+              
+              if (effectiveUser && effectiveUser.role === 'instructor') {
+                return (
+                  <InstructorDashboard
+                    instructor={mockInstructor}
+                    sessions={mockSessions}
+                    students={[mockUser]}
+                    onDeleteSession={handleDeleteSession}
+                    onStartSession={handleStartSession}
+                    onLogout={handleLogout}
+                  />
+                );
+              } else {
+                return <Navigate to="/login" replace />;
+              }
+            })()
           } 
         />
         

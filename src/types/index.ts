@@ -225,3 +225,35 @@ export interface SalatVideo {
     views: number;
     isPublished: boolean;
 }
+
+export interface SessionSubscription {
+    id: string;
+    userId: string;
+    sessionId: string;
+    subscriptionDate: string;
+    status: 'active' | 'cancelled' | 'completed';
+    paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+    price: number;
+    discount?: number;
+    totalPaid: number;
+    nextPaymentDate?: string;
+    userName: string;
+    userEmail: string;
+    sessionTitle: string;
+}
+
+export interface Announcement {
+    id: string;
+    title: string;
+    content: string;
+    type: 'general' | 'session_specific' | 'urgent';
+    targetAudience: 'all_students' | 'session_subscribers' | 'specific_users';
+    sessionId?: string; // If targeting specific session subscribers
+    targetUserIds?: string[]; // If targeting specific users
+    createdBy: string; // Instructor ID
+    createdAt: string;
+    scheduledFor?: string; // If announcement is scheduled for later
+    status: 'draft' | 'published' | 'scheduled';
+    priority: 'low' | 'medium' | 'high' | 'urgent';
+    readBy: string[]; // Array of user IDs who have read the announcement
+}
