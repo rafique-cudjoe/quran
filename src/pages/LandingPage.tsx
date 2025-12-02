@@ -1,17 +1,19 @@
-import React from 'react';
-import { 
-  BookOpen, 
-  Users, 
-  Video, 
-  Star, 
-  Award, 
-  Clock, 
+import React, { useState, useEffect } from 'react';
+import {
+  BookOpen,
+  Users,
+  Video,
+  Star,
+  Award,
+  Clock,
   Globe,
   CheckCircle,
   Play,
   ArrowRight,
   User,
-  Calendar
+  Calendar,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
@@ -24,6 +26,23 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin, onWatchSalatVideos }) => {
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+
+  useEffect(() => {
+    const video = document.getElementById('landing-hero-video') as HTMLVideoElement;
+    if (video) {
+      setIsVideoMuted(video.muted);
+    }
+  }, []);
+
+  const handleToggleMute = () => {
+    const video = document.getElementById('landing-hero-video') as HTMLVideoElement;
+    if (video) {
+      video.muted = !video.muted;
+      setIsVideoMuted(video.muted);
+    }
+  };
+
   const features = [
     {
       icon: <Video className="w-6 h-6 text-blue-700" />,
@@ -231,7 +250,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
                   {/* Main video card */}
                   <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl p-3 sm:p-4 border border-slate-200">
                     {/* Video element - 480x800 aspect ratio maintained */}
-                    <div className="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900" style={{ aspectRatio: '480/800' }}>
+                    <div className="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900 border-2 border-transparent hover:border-blue-400/50 transition-all duration-500" style={{ aspectRatio: '480/800' }}>
+                      {/* Animated glow effect */}
+                      <div className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                        style={{
+                          background: 'radial-gradient(circle at center, rgba(96, 165, 250, 0.1) 0%, transparent 70%)'
+                        }}
+                      ></div>
+
                       <video
                         id="landing-hero-video"
                         className="w-full h-full object-cover"
@@ -247,35 +273,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
 
                       {/* Video overlay badge */}
                       <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-                        <Badge variant="success" className="backdrop-blur-sm bg-green-500/90 text-white shadow-lg">
-                          <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-                          Live Demo
-                        </Badge>
-                        <button
-                          onClick={onWatchSalatVideos}
-                          className="bg-white/90 backdrop-blur-sm hover:bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all hover:shadow-xl"
-                        >
-                          <Play className="w-4 h-4 inline mr-1" />
-                          Watch Full
-                        </button>
                       </div>
 
                       {/* Audio Control Button */}
-                      <div className="absolute bottom-4 right-4">
-                        <button
-                          onClick={() => {
-                            const video = document.getElementById('landing-hero-video') as HTMLVideoElement;
-                            if (video) {
-                              video.muted = !video.muted;
-                            }
-                          }}
-                          className="bg-white/95 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all hover:shadow-xl hover:scale-110"
-                          aria-label="Toggle sound"
-                        >
-                          <svg className="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                          </svg>
-                        </button>
+                      <div className="absolute bottom-4 right-4 z-10">
+                        <div className="flex flex-col items-center gap-2">
+                          <button
+                            onClick={handleToggleMute}
+                            className={`p-3 rounded-full shadow-lg transition-all hover:shadow-xl hover:scale-110 backdrop-blur-sm ${
+                              isVideoMuted
+                                ? 'bg-slate-700/90 hover:bg-slate-800 ring-2 ring-white/30'
+                                : 'bg-white/95 hover:bg-white ring-2 ring-blue-400/50'
+                            }`}
+                            aria-label={isVideoMuted ? 'Unmute video' : 'Mute video'}
+                          >
+                            {isVideoMuted ? (
+                              <VolumeX className="w-5 h-5 text-white" />
+                            ) : (
+                              <Volume2 className="w-5 h-5 text-slate-700" />
+                            )}
+                          </button>
+                          <span className="text-white text-xs font-semibold bg-black/50 px-2 py-1 rounded backdrop-blur-sm whitespace-nowrap">
+                            {isVideoMuted ? 'Muted' : 'Unmuted'}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -289,10 +310,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
                           <h3 className="font-semibold text-slate-900 text-sm">Muallim Adubofour Ismael</h3>
                           <p className="text-xs text-slate-500">Quran Instructor</p>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-slate-500">Duration</p>
-                        <p className="text-sm font-semibold text-slate-900">45 min</p>
                       </div>
                     </div>
                   </div>
